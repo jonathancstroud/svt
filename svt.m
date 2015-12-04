@@ -1,19 +1,26 @@
-function [Xk] = svt(M, Mtrue)
+function [Xk] = svt(M, Mtrue, svt_opts)
 % Singular Value Thresholding
 % http://statweb.stanford.edu/~candes/papers/SVT.pdf
 
 % They use lmsvd in the paper, matlab's svds seems to work fine
 % addpath lmsvd
 
+fprintf('---SVT options---\n');
+disp(svt_opts)
+
+max_iter = svt_opts.max_iter;
+tau = svt_opts.tau;
+delta = svt_opts.delta;
+k_0 = svt_opts.k_0; % must be int!
+l = svt_opts.l;
+eps = svt_opts.eps;
+
+
+
 [n, d] = size(M);
 Xk = M; Xk(isnan(Xk))=0;
 
 % Hyperparameters
-max_iter = 10;
-tau = 2*d;
-delta = 1.2*n*d/sum(~isnan(M(:)));
-k_0 = 1;
-l = 1;
 
 % Set Y0
 Yk = k_0*delta*M;% Yk(isnan(Yk))=0; Yk = Yk+randn(size(M));
@@ -29,8 +36,8 @@ for i = 1:max_iter
     while 1
         % Compute top s singular values of Yk
         [U, S, V] = svds(Yk, s);
-
         sigmas = diag(S);
+        
         s = s + l;
         
         if sigmas(s - l) <= tau
@@ -48,8 +55,16 @@ for i = 1:max_iter
     Xk = U*diag(sigmas(1:r))*V';
 
     % Project onto Yk
-    P = M - Xk; P(isnan(P)) = 0;
+    
+    P = M - Xk; P(isnan(M)) = 0;
+    Mt = M; Mt(isnan(Mt))=0;
+
+    if norm(P, 'fro')/norm(Mt, 'fro') <= eps
+        break;
+    end
+    
+    
     Yk = Yk + delta*P;
 
-    fprintf('iter %d: %f\n', i, NMAE(Mtrue, Xk));
+    fprintf('iter %d NMAE: %f\n', i, NMAE(Mtrue, Xk));
 end

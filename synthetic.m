@@ -10,8 +10,9 @@ function [M, Md] = synthetic(n, rank, m)
 rank = min(rank, n);
 m = min(n*n, m);
 
-U = randn(n, rank);
-M = U*U';
+U = randn(n, rank)*2;
+V = randn(n, rank)*2;
+M = U*V';
 
 idx = randperm(n*n);
 
