@@ -38,8 +38,10 @@ figure (1)
 plot(lambda/sum(lambda))
 title('Curve of variances')
 
+% principal components 
 x=A*(E(:,1:2));
 
+% Plotting the divisions
 figure (2)
 plot(x(:,1),x(:,2),'*')
 x2=max(x(:,1));
@@ -56,10 +58,9 @@ for iter=1:4
     rectangle('Position',[x1 0 -x1 y2]);
 end
 
+
 point_x=[x1 x1 x2 x2];
 point_y=[y1 y2 y1 y2];
-
-
 
 for iter=1:no_iter
     
@@ -73,8 +74,11 @@ for iter=1:no_iter
     end
 end
 
+% Clustering the training data points 
+% No. of divisions= 12*no_iter+4;
 count=1;
-cluster=zeros(round(n/2),500);
+%contains the ids of points within the cluster
+cluster1=zeros(round(n/2),500);
 for i=1:iter+1
     
     j=no_iter+2-i;
@@ -93,7 +97,7 @@ for i=1:iter+1
             
             in_partition=inpolygon(x(:,1),x(:,2),x_coord2,y_coord2);
             n_points(count)=sum(in_partition);
-            cluster(1:n_points(count),count)=find(in_partition==1);
+            cluster1(1:n_points(count),count)=find(in_partition==1);
             count=count+1;
             end
         end
@@ -140,8 +144,11 @@ plot(x(:,1),x(:,2),'*')
 
 % figure (4)
 % plot(n_points)
-        
+
+% Clustering the test data points 
+% No. of divisions= 12*no_iter+4;
 count=1;
+%contains the ids of points within the cluster
 cluster2=zeros(round(n/2),500);
 for i=1:iter+1
     
@@ -170,18 +177,20 @@ for i=1:iter+1
             
 end
 
+%Mean of the training clusters
 y_mean=zeros(length(n_points),90);
 for i=1:length(n_points)
-    y_mean(i,:)=nanmean(Ytr(cluster(1:n_points(i),i),:));
+    y_mean(i,:)=nanmean(Ytr(cluster1(1:n_points(i),i),:));
 end
     
 y_test=zeros(n,90);
 
+%Assigning values to the test data points based on training clusters
 for i=1:length(n_points2)
    y_test(cluster2(1:n_points2(i),i),:)=ones(n_points2(i),1)*y_mean(i,:);
 end
 
-%0.187 reported 
+%NMAE=0.1921 (0.187 reported in the paper) 
 
 NMAE(Yte, y_test) %0.1921
     
