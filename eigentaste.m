@@ -138,8 +138,8 @@ figure (3)
 plot(x(:,1),x(:,2),'*')
 
 
-figure (4)
-plot(n_points)
+% figure (4)
+% plot(n_points)
         
 count=1;
 cluster2=zeros(round(n/2),500);
@@ -181,7 +181,9 @@ for i=1:length(n_points2)
    y_test(cluster2(1:n_points2(i),i),:)=ones(n_points2(i),1)*y_mean(i,:);
 end
 
-NMAE(Yte, y_test)
+%0.187 reported 
+
+NMAE(Yte, y_test) %0.1921
     
     
     
