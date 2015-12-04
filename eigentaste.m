@@ -1,6 +1,9 @@
 clc
 clear all
 close all
+
+%Eigentaste 
+
 if ~exist('jester_loaded')
     load_data;
 end
@@ -178,9 +181,7 @@ for i=1:length(n_points2)
    y_test(cluster2(1:n_points2(i),i),:)=ones(n_points2(i),1)*y_mean(i,:);
 end
 
-MAE=mean(nanmean(abs(Yte-y_test)))
-NMAE=MAE/20
-    
+NMAE(Yte, y_test)
     
     
     
