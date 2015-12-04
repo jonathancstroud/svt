@@ -1,3 +1,4 @@
+clc
 clear all
 close all
 if ~exist('jester_loaded')
@@ -7,12 +8,12 @@ end
 %nxm matrix of raw user ratings
 
 R=Xtr;
-
+no_iter =4; % total no. of iterations
 
 %nxk normalized matrix of user ratings in G
 
 
-A= R(:,dense_jokes);
+A= Xtr;
 n=length(A);
 mu_j=ones(n,1)*mean(A);
 var_j=ones(n,1)*var(A);
@@ -26,7 +27,7 @@ C=1/(n-1)*A'*A;
 % Eigen Decomposition
 
 [E Lambda ]=eig(C);
-[lambda index]=sort(diag(Lambda),'descend')
+[lambda index]=sort(diag(Lambda),'descend');
 E=E(:,index);
 Lambda=Lambda(:,index);
 
@@ -55,7 +56,7 @@ end
 point_x=[x1 x1 x2 x2];
 point_y=[y1 y2 y1 y2];
 
-no_iter =6; % total no. of iterations
+
 
 for iter=1:no_iter
     
@@ -106,7 +107,7 @@ R=Xte;
 %nxk normalized matrix of user ratings in G
 
 
-A= R(:,dense_jokes);
+A= Xte;
 n=length(A);
 mu_j=ones(n,1)*mean(A);
 var_j=ones(n,1)*var(A);
@@ -120,7 +121,7 @@ C=1/(n-1)*A'*A;
 % Eigen Decomposition
 
 [E Lambda ]=eig(C);
-[lambda index]=sort(diag(Lambda),'descend')
+[lambda index]=sort(diag(Lambda),'descend');
 E=E(:,index);
 Lambda=Lambda(:,index);
 
@@ -166,17 +167,19 @@ for i=1:iter+1
             
 end
 
-x_mean=zeros(length(n_points),100);
+y_mean=zeros(length(n_points),90);
 for i=1:length(n_points)
-    x_mean(i,:)=nanmean(Xtr(cluster(1:n_points(i),i),:));
+    y_mean(i,:)=nanmean(Ytr(cluster(1:n_points(i),i),:));
 end
     
-x_test=zeros(n,100);
+y_test=zeros(n,90);
 
 for i=1:length(n_points2)
-   x_test(cluster2(1:n_points2(i),i),:)=ones(n_points2(i),1)*x_mean(i,:);
+   y_test(cluster2(1:n_points2(i),i),:)=ones(n_points2(i),1)*y_mean(i,:);
 end
-    
+
+MAE=mean(nanmean(abs(Yte-y_test)))
+NMAE=MAE/20
     
     
     
