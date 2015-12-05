@@ -1,21 +1,24 @@
-function [Xk] = svt(M, Mtrue, svt_opts)
+function [Xk, time, iter, relerr] = svt(M, Mtrue, max_iter, tau, delta, k_0, l, eps)
 % Singular Value Thresholding
 % http://statweb.stanford.edu/~candes/papers/SVT.pdf
 
-% They use lmsvd in the paper, matlab's svds seems to work fine
-% addpath lmsvd
 
-fprintf('---SVT options---\n');
-disp(svt_opts)
+addpath lmsvd
+%addpath PROPACK
 
-max_iter = svt_opts.max_iter;
-tau = svt_opts.tau;
-delta = svt_opts.delta;
-k_0 = svt_opts.k_0; % must be int!
-l = svt_opts.l;
-eps = svt_opts.eps;
+%fprintf('---SVT options---\n');
+%disp(svt_opts)
+
+%max_iter = svt_opts.max_iter;
+%tau = svt_opts.tau;
+%delta = svt_opts.delta;
+%k_0 = svt_opts.k_0; % must be int!
+%l = svt_opts.l;
+%eps = svt_opts.eps;
 
 
+
+tic;
 
 [n, d] = size(M);
 Xk = M; Xk(isnan(Xk))=0;
@@ -35,9 +38,10 @@ for i = 1:max_iter
     s = r+1;
     while 1
         % Compute top s singular values of Yk
-        [U, S, V] = svds(Yk, s);
+        %s
+        [U, S, V] = lmsvd(Yk, s, []);
         sigmas = diag(S);
-        
+        % Some problem with sigmas?
         s = s + l;
         
         if sigmas(s - l) <= tau
@@ -45,6 +49,9 @@ for i = 1:max_iter
         end
         
     end
+    
+    %sigmas
+    %tau
     
     r = max(find(sigmas > tau));
 
@@ -68,3 +75,7 @@ for i = 1:max_iter
 
     fprintf('iter %d NMAE: %f\n', i, NMAE(Mtrue, Xk));
 end
+
+time = toc;
+iter = i;
+relerr = norm(P, 'fro')/norm(Mt, 'fro');

@@ -18,3 +18,4 @@ idx = randperm(n*n);
 
 Md = zeros(n, n);
 Md(idx(1:m)) = M(idx(1:m));
+Md(Md==0) = nan;
