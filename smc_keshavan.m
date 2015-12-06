@@ -1,5 +1,5 @@
 %% Spectral Matrix Completion
-function FinalEst=smc_keshavan(M)
+function [FinalEst,time]=smc_keshavan(M)
 %M should be a sparse matrix where the NaN's have been replaced with zeros.
 
 tic
@@ -46,7 +46,7 @@ for i = 1:niter
 end
 
 FinalEst=X*S*Y';
-toc
+time=toc;
 end
 %% Opt S
 function S =optS(X,Y,M,E)
