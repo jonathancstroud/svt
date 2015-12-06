@@ -1,10 +1,8 @@
-%% Main
+%% Spectral Matrix Completion
 function FinalEst=smc_keshavan(M)
 %M should be a sparse matrix where the NaN's have been replaced with zeros.
 
 tic
-
-% Spectral Matrix Completion %%%
 
 % Set Variables
 m=size(M,1);
