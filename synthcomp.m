@@ -6,7 +6,7 @@ nmat=[10;1e2;1e3;1e4];
 rankmat=[.10;.20;.30];
 sparsemat=[.30;.50;.70];
 
-results=zeros(size(nat,1)*size(rankmat,1)*size(sparsemat,1),7);
+results=zeros(size(nat,1)*size(rankmat,1)*size(sparsemat,1),10);
 
 round=1;
 for i=1:size(nmat,1)
@@ -22,15 +22,15 @@ for i=1:size(nmat,1)
             Mest(isnan(Mest))=0;
             
             % Mean
-            mean=simpleMean(Mest);
+            [mean,meantime]=simpleMean(Mest);
             meanerr=calcError(Mtrue,M,mean);
             
             % SVT
-            svt=
+            [svt,svttime,~,~]=svt(M, Mtrue, 5000, tau, delta, k_0, l, eps);
             svterr=calcError(Mtrue,M,svt);
             
             % SMC
-            smc=smc_keshavan(Mest);
+            [smc,smctime]=smc_keshavan(Mest);
             smcerr=calcError(Mtrue,M,smc);
             
             % Save a Bunch of Files
@@ -38,13 +38,13 @@ for i=1:size(nmat,1)
             csvwrite(fname,'Mtrue');
             fname=sprintf('M%d.csv',round);
             csvwrite(fname,'M');
-            results(round,:)=[round,n,rank,m,meanerr,svterr,smcerr];
+            results(round,:)=[round,n,rank,m,meanerr,svterr,smcerr,meantime,svttime,smctime];
             
             round=round+1;
         end
     end
 end
-csvwrite('key.csv','key');
+csvwrite('results.csv','results');
 
 %create new method of calculating error.
 end
@@ -55,8 +55,10 @@ function error=calcError(Mtrue,M, Mest)
     error=nansum(nansum((test-Mest).^2));
 end
 
-function FinalEst=simpleMean(M)
+function [FinalEst,time]=simpleMean(M)
+    tic
     nTe = size(M,1);
     mu = nanmean(Ytr);
     FinalEst = repmat(mu, nTe, 1);
+    time=toc;
 end
