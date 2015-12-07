@@ -1,6 +1,8 @@
 % Runs Comparison of Mean, SVT and SMC on Syntetic Matricies of varying
 % sizes/ranks/sparsity
 
+%%%%%% this uses version of lmsvd that commented out lines 49-51
+
 function []=synthcomp()
 nmat=[1e2;1e3;1e4];
 rankmat=[.10;.20;.30];
@@ -13,11 +15,15 @@ for i=1:size(nmat,1)
     n=nmat(i);
     for j=1:size(rankmat,1)
         rank=round(n*rankmat(j));
-        for k=1:size(sparsemat,1)
-            
-            % Create Synthetic Matrix
+        % Create Synthetic Matrix Mtrue
+        Mtrue=synthetic2(n,rank);
+        
+        for k=1:size(sparsemat,1)          
+            % Create Synthetic Matrix M & Mest
             m=round((1-sparsemat(k))*n*n);
-            [Mtrue,M]=synthetic(n,rank,m);
+            idx = randperm(n*n);
+            M = NaN(n);
+            M(idx(1:m)) = Mtrue(idx(1:m));            
             Mest=M;
             Mest(isnan(Mest))=0;
             
@@ -63,4 +69,17 @@ function [FinalEst,time]=simpleMean(M)
     mu = nanmean(M);
     FinalEst = repmat(mu, nTe, 1);
     time=toc;
+end
+
+function M= synthetic2(n, rank)
+% Generate synthetic data matrix as in SVT paper
+% 
+% Inputs:
+%    n: scalar - size of unknown matrix (square)
+%    rank: scalar - rank of unknown matrix
+%    m: scalar - number of elements to sample
+rank = min(rank, n);
+U = randn(n, rank)*2;
+V = randn(n, rank)*2;
+M = U*V';
 end
