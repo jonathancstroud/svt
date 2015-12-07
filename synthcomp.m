@@ -4,8 +4,8 @@
 %%%%%% this uses version of lmsvd that commented out lines 49-51
 
 function []=synthcomp()
-nmat=[1e2;1e3;1e4];
-rankmat=[.10;.20;.30];
+nmat=[1e3;5e3;1e4;5e4;1e5];
+rankmat=[10;50;100];
 sparsemat=[.30;.50;.70];
 
 results=zeros(size(nmat,1)*size(rankmat,1)*size(sparsemat,1),10);
@@ -14,7 +14,7 @@ count=1;
 for i=1:size(nmat,1)
     n=nmat(i);
     for j=1:size(rankmat,1)
-        rank=round(n*rankmat(j));
+        rank=rankmat(j);
         % Create Synthetic Matrix Mtrue
         Mtrue=synthetic2(n,rank);
         
@@ -46,15 +46,16 @@ for i=1:size(nmat,1)
             
             % Save a Bunch of Files
             fname=sprintf('Mtrue%d.csv',count);
-            csvwrite(fname,'Mtrue');
+            csvwrite(fname,Mtrue);
             fname=sprintf('M%d.csv',count);
-            csvwrite(fname,'M');
+            csvwrite(fname,M);
             results(count,:)=[count,n,rank,m,meanerr,svterr,smcerr,meantime,svttime,smctime];
+            fname=sprintf('results%d.csv',count);
+            csvwrite(fname,results);
             count=count+1;
         end
     end
 end
-csvwrite('results.csv','results');
 end
 
 function error=calcError(Mtrue,M, Mest)
