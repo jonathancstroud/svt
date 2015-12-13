@@ -16,6 +16,5 @@ M = U*V';
 
 idx = randperm(n*n);
 
-Md = zeros(n, n);
+Md = NaN(n);
 Md(idx(1:m)) = M(idx(1:m));
-Md(Md==0) = nan;

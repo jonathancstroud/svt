@@ -1,28 +1,8 @@
-%% Main
-function []=main()
+%% Spectral Matrix Completion
+function [FinalEst,time]=smc_keshavan(M)
+%M should be a sparse matrix where the NaN's have been replaced with zeros.
+
 tic
-clear all;
-
-% Create Low Rank Matrix to Test
-% use a small matrix to test or the jester data
-rng(10);
-Mtrue=zeros(100);
-for i=1:14
-    Mtrue=Mtrue+randn(100,1)*randn(1,100);
-end
-M=Mtrue;
-M(rand(100,100)<.2)=0;
-clear i ans;
-
-
-% User Jester Matrix to Test
-% if ~exist('jester_loaded')
-%     load_data;
-% end
-% M = Ytr;
-% M(isnan(M))=0;
-
-% Spectral Matrix Completion %%%
 
 % Set Variables
 m=size(M,1);
@@ -64,10 +44,9 @@ for i = 1:niter
 		break ;
 	end
 end
-S = S ;%/rescal_param ;
-disp('Jeeheh')
-NMAE(Mtrue,X*S*Y')
-toc
+
+FinalEst=X*S*Y';
+time=toc;
 end
 %% Opt S
 function S =optS(X,Y,M,E)
@@ -157,3 +136,4 @@ function r = guessRank(M);
 	r = max([r1 r2]);
 end
     
+
