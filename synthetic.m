@@ -1,4 +1,4 @@
-function [M, Md] = synthetic(n, rank, m)
+function [M, Md] = synthetic(n, rank, m, var)
 % Generate synthetic data matrix as in SVT paper
 % 
 % Inputs:
@@ -10,8 +10,8 @@ function [M, Md] = synthetic(n, rank, m)
 rank = min(rank, n);
 m = min(n*n, m);
 
-U = randn(n, rank)*2;
-V = randn(n, rank)*2;
+U = randn(n, rank)*var;
+V = randn(n, rank)*var;
 M = U*V';
 
 idx = randperm(n*n);

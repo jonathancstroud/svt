@@ -2,3 +2,7 @@
 data/*.*~
 data/*#
 PROPACK/
+logs/
+pbs/
+*.pbs
+*.log
