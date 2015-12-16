@@ -7,3 +7,4 @@ pbs/
 *.pbs
 *.log
 old/
+visualize_jokes/
