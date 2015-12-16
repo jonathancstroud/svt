@@ -6,3 +6,4 @@ logs/
 pbs/
 *.pbs
 *.log
+old/
